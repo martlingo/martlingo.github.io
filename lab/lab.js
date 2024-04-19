@@ -80,14 +80,15 @@ function updateNextBet() {
 
 function updateDisplays() {
     if (sequence.length === 0) {
-        // Hide the bottom panel if the sequence is empty
         document.getElementById('bottomPanel').style.display = 'none';
     } else {
-        // Show the bottom panel if the sequence has elements
         document.getElementById('bottomPanel').style.display = 'block';
 
-        // Update betting and sequence information
-        document.getElementById('nextBet').innerText = `${currentBet} on ${currentColor}`;
+        // Update bet circle color and text
+        const betCircle = document.getElementById('betCircle');
+        betCircle.className = 'mx-auto h-16 w-16 flex items-center justify-center rounded-full ' + (currentColor === 'Red' ? 'red-circle' : 'black-circle');
+        document.getElementById('betAmount').innerText = currentBet;
+
         document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
         document.getElementById('profitDisplay').innerText = profit;
     }
