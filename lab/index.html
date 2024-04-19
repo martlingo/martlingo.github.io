@@ -3,31 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Labouchere Betting System</title>
-    <!-- Include Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Lab</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.17/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="form-group">
-        <label for="minBet">Minimum Bet:</label>
-        <input type="number" id="minBet" class="form-control" value="10">
+<body class="bg-gray-100">
+<div class="max-w-md mx-auto my-5 p-3 border rounded-lg shadow-lg bg-white">
+    <div class="mb-3">
+        <label for="minBet" class="block text-gray-700 text-sm font-bold mb-1">Minimum Bet:</label>
+        <input type="number" id="minBet" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="10">
     </div>
-    <div class="form-group">
-        <label for="targetProfit">Target Profit:</label>
-        <input type="number" id="targetProfit" class="form-control" value="100">
+    <div class="mb-3">
+        <label for="targetProfit" class="block text-gray-700 text-sm font-bold mb-1">Target Profit:</label>
+        <input type="number" id="targetProfit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="100">
     </div>
-    <div class="form-group">
-        <label for="split">Number of Parts:</label>
-        <input type="number" id="split" class="form-control" value="10">
+    <div class="mb-3">
+        <label for="split" class="block text-gray-700 text-sm font-bold mb-1">Number of Parts:</label>
+        <input type="number" id="split" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="10">
     </div>
-    <button id="start" class="btn btn-primary btn-block">Ok</button>
-    <h2 class="mt-4">Next Bet: <span id="nextBet" class="text-primary"></span></h2>
-    <button id="won" class="btn btn-success btn-block">Won</button>
-    <button id="lost" class="btn btn-danger btn-block">Lost</button>
-    <h2 class="mt-4">Sequence: <span id="sequenceDisplay"></span></h2>
-    <h2>Profit So Far: <span id="profitDisplay">0</span></h2>
+    <button id="start" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline block w-full mb-3">Ok</button>
+    <h2 class="text-lg">Sequence: <span id="sequenceDisplay" class="text-sm"></span></h2>
+    <div class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3">
+        <h2 class="text-lg text-center">Next Bet: <span id="nextBet" class="font-bold"></span></h2>
+        <div class="flex justify-between">
+            <button id="won" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 mr-2">Won</button>
+            <button id="lost" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 ml-2">Lost</button>
+        </div>
+        <h2 class="text-lg mt-3 text-center">Profit So Far: <span id="profitDisplay">0</span></h2>
+    </div>
 </div>
-<script src="labouchere.js"></script>
+<script src="lab.js"></script>
 </body>
 </html>

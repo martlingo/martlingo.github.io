@@ -7,10 +7,20 @@ document.getElementById('start').addEventListener('click', function() {
     let targetProfit = parseInt(document.getElementById('targetProfit').value, 10);
     let split = parseInt(document.getElementById('split').value, 10);
     profit = 0; // Reset profit at the start
-    initializeSequence(minBet, targetProfit, split);
-    updateNextBet();
-    updateDisplays();
+    if (minBet > 0 && targetProfit > 0 && split > 0) {
+        initializeSequence(minBet, targetProfit, split);
+        updateNextBet();
+        updateDisplays();
+        document.getElementById('won').style.display = 'block'; // Show 'Won' button
+        document.getElementById('lost').style.display = 'block'; // Show 'Lost' button
+    } else {
+        alert('Please enter positive values for all fields.');
+    }
 });
+
+// Initially hide 'Won' and 'Lost' buttons
+document.getElementById('won').style.display = 'none';
+document.getElementById('lost').style.display = 'none';
 
 document.getElementById('won').addEventListener('click', function() {
     profit += currentBet;
