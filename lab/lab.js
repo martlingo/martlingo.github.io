@@ -58,25 +58,39 @@ function initializeSequence(unitSize) {
 }
 
 function updateNextBet() {
+    if (sequence.length >= 2) {
+        // Calculate bet as sum of the first and last item in the sequence if there are at least two elements
+        currentBet = sequence[0] + sequence[sequence.length - 1];
+    } else if (sequence.length === 1) {
+        // If there is only one element, bet that amount
+        currentBet = sequence[0];
+    } else {
+        // If there are no elements, set bet to 0
+        currentBet = 0;
+    }
+
     if (betCount >= maxBetsPerColor) {
-        // Switch color after two bets
+        // Switch color after max bets
         currentColor = (currentColor === 'Red' ? 'Black' : 'Red');
         betCount = 0;
     }
-    currentBet = 10; // Fixed bet amount for simplicity
     betCount++;
 }
 
 function updateDisplays() {
-    document.getElementById('nextBet').innerText = `10 on ${currentColor}`; // Display the next bet as "10 on Color"
+    document.getElementById('nextBet').innerText = `${currentBet} on ${currentColor}`; // Display the current bet on the chosen color
     document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
     document.getElementById('profitDisplay').innerText = profit;
 }
 
 function updateSequenceForWin() {
     profit += currentBet;
-    sequence.pop();
-    sequence.shift();
+    if (sequence.length > 1) {
+        sequence.pop(); // Remove the last element
+        sequence.shift(); // Remove the first element
+    } else if (sequence.length === 1) {
+        sequence.shift(); // Only remove the first element if there is one left
+    }
     updateNextBet();
 }
 
