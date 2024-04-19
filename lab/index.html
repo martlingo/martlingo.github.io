@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labouchere Betting System</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="form-group">
+        <label for="minBet">Minimum Bet:</label>
+        <input type="number" id="minBet" class="form-control" value="10">
+    </div>
+    <div class="form-group">
+        <label for="targetProfit">Target Profit:</label>
+        <input type="number" id="targetProfit" class="form-control" value="100">
+    </div>
+    <div class="form-group">
+        <label for="split">Number of Parts:</label>
+        <input type="number" id="split" class="form-control" value="10">
+    </div>
+    <button id="start" class="btn btn-primary btn-block">Ok</button>
+    <h2 class="mt-4">Next Bet: <span id="nextBet" class="text-primary"></span></h2>
+    <button id="won" class="btn btn-success btn-block">Won</button>
+    <button id="lost" class="btn btn-danger btn-block">Lost</button>
+    <h2 class="mt-4">Sequence: <span id="sequenceDisplay"></span></h2>
+    <h2>Profit So Far: <span id="profitDisplay">0</span></h2>
+</div>
+<script src="labouchere.js"></script>
+</body>
+</html>
