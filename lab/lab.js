@@ -2,6 +2,9 @@ let sequence = [];
 let currentBet = 0;
 let profit = 0;
 let lastState = null; // Store the last state for a single undo
+let currentColor = 'Red'; // Initial betting color
+let betCount = 0; // Counter to track number of bets on the current color
+const maxBetsPerColor = 2; // Maximum bets on one color before switching
 
 document.getElementById('start').addEventListener('click', function() {
     let unitSize = parseInt(document.getElementById('unitSize').value, 10);
@@ -40,6 +43,8 @@ document.getElementById('undo').addEventListener('click', function() {
     sequence = [...lastState.sequence];
     profit = lastState.profit;
     currentBet = lastState.currentBet;
+    currentColor = lastState.currentColor; // Restore the color state
+    betCount = lastState.betCount; // Restore the bet count
     updateDisplays();
     lastState = null; // Clear last state after undo
     disableUndo(); // Disable undo button after use
@@ -47,21 +52,23 @@ document.getElementById('undo').addEventListener('click', function() {
 
 function initializeSequence(unitSize) {
     sequence = new Array(10).fill(unitSize);  // Fill sequence with 10 parts of unit size
+    currentColor = 'Red'; // Start with Red
+    betCount = 0; // Reset bet count
     updateNextBet(); // Ensure next bet is calculated right after initialization
 }
 
 function updateNextBet() {
-    if (sequence.length > 1) {
-        currentBet = sequence[0] + sequence[sequence.length - 1];  // Sum of the first and last elements
-    } else if (sequence.length === 1) {
-        currentBet = sequence[0];  // If only one element, the bet is that element
-    } else {
-        currentBet = 0;  // No elements in sequence
+    if (betCount >= maxBetsPerColor) {
+        // Switch color after two bets
+        currentColor = (currentColor === 'Red' ? 'Black' : 'Red');
+        betCount = 0;
     }
+    currentBet = 10; // Fixed bet amount for simplicity
+    betCount++;
 }
 
 function updateDisplays() {
-    document.getElementById('nextBet').innerText = currentBet;  // Display the next bet
+    document.getElementById('nextBet').innerText = `10 on ${currentColor}`; // Display the next bet as "10 on Color"
     document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
     document.getElementById('profitDisplay').innerText = profit;
 }
@@ -83,7 +90,9 @@ function saveLastState() {
     lastState = {
         sequence: [...sequence],
         profit: profit,
-        currentBet: currentBet
+        currentBet: currentBet,
+        currentColor: currentColor, // Save current color
+        betCount: betCount // Save bet count
     };
 }
 
