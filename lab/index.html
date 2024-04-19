@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lab</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.17/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         .red-circle {
-            background-color: #FF4136; /* Adjust the color to your desired shade of red */
+            background-color: #FF4136; /* Red color */
         }
-
         .black-circle {
-            background-color: #111; /* Adjust the color to your desired shade of black */
+            background-color: #111; /* Black color */
         }
-
         button:disabled {
             opacity: 0.5;
             background-color: #cccccc; /* Light gray */
@@ -34,13 +33,19 @@
                 <span id="betAmount" class="font-bold text-white text-lg"></span>
             </div>
         </div>
-        <h2 class="text-lg text-center">Sequence: <span id="sequenceDisplay" class="text-sm"></span></h2>
+        <h2 class="text-lg text-center"><span id="sequenceDisplay" class="text-sm"></span></h2>
         <div class="flex justify-between">
-            <button id="won" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1">Won</button>
-            <button id="lost" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 ml-2 mr-2">Lost</button>
-            <button id="undo" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Undo</button>
+            <button id="won" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1">
+                <i class="fa fa-thumbs-up"></i>
+            </button>
+            <button id="lost" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 ml-2 mr-2">
+                <i class="fa fa-thumbs-down"></i>
+            </button>
+            <button id="undo" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                <i class="fa fa-undo"></i>
+            </button>
         </div>
-        <h2 class="text-lg mt-3 text-center">Status: R<span id="profitDisplay">0</span></h2>
+        <h2 class="text-lg mt-3 text-center">R<span id="profitDisplay">0</span></h2>
     </div>
 </div>
 <script src="lab.js?v=1"></script>
