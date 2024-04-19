@@ -20,8 +20,8 @@
         <input type="number" id="unitSize" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="10">
     </div>
     <button id="start" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline block w-full mb-3">Ok</button>
-    <h2 class="text-lg">Sequence: <span id="sequenceDisplay" class="text-sm"></span></h2>
-    <div class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3">
+    <div id="bottomPanel" class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3" style="display: none">
+        <h2 class="text-lg text-center">Sequence: <span id="sequenceDisplay" class="text-sm"></span></h2>
         <h2 class="text-lg text-center">Next Bet: <span id="nextBet" class="font-bold"></span></h2>
         <div class="flex justify-between">
             <button id="won" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1">Won</button>

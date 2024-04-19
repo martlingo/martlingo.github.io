@@ -54,7 +54,8 @@ function initializeSequence(unitSize) {
     sequence = new Array(10).fill(unitSize);  // Fill sequence with 10 parts of unit size
     currentColor = 'Red'; // Start with Red
     betCount = 0; // Reset bet count
-    updateNextBet(); // Ensure next bet is calculated right after initialization
+    // updateNextBet(); // Ensure next bet is calculated right after initialization
+    // updateDisplays()
 }
 
 function updateNextBet() {
@@ -78,9 +79,18 @@ function updateNextBet() {
 }
 
 function updateDisplays() {
-    document.getElementById('nextBet').innerText = `${currentBet} on ${currentColor}`; // Display the current bet on the chosen color
-    document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
-    document.getElementById('profitDisplay').innerText = profit;
+    if (sequence.length === 0) {
+        // Hide the bottom panel if the sequence is empty
+        document.getElementById('bottomPanel').style.display = 'none';
+    } else {
+        // Show the bottom panel if the sequence has elements
+        document.getElementById('bottomPanel').style.display = 'block';
+
+        // Update betting and sequence information
+        document.getElementById('nextBet').innerText = `${currentBet} on ${currentColor}`;
+        document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
+        document.getElementById('profitDisplay').innerText = profit;
+    }
 }
 
 function updateSequenceForWin() {
