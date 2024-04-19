@@ -1,26 +1,22 @@
-let sequence = [];
-let currentBet = 0;
-let profit = 0;
+window.onload = function() {
+    document.getElementById('unitSize').value = 10; // Set default unit size
+};
 
 document.getElementById('start').addEventListener('click', function() {
-    let minBet = parseInt(document.getElementById('minBet').value, 10);
-    let targetProfit = parseInt(document.getElementById('targetProfit').value, 10);
-    let split = parseInt(document.getElementById('split').value, 10);
-    profit = 0; // Reset profit at the start
-    if (minBet > 0 && targetProfit > 0 && split > 0) {
-        initializeSequence(minBet, targetProfit, split);
-        updateNextBet();
-        updateDisplays();
-        document.getElementById('won').style.display = 'block'; // Show 'Won' button
-        document.getElementById('lost').style.display = 'block'; // Show 'Lost' button
-    } else {
-        alert('Please enter positive values for all fields.');
-    }
-});
+    let unitSize = parseInt(document.getElementById('unitSize').value, 10);
+    let targetProfit = unitSize * 10; // Calculate target profit
+    let split = 10; // Fixed number of parts
 
-// Initially hide 'Won' and 'Lost' buttons
-document.getElementById('won').style.display = 'none';
-document.getElementById('lost').style.display = 'none';
+    if (isNaN(unitSize) || unitSize <= 0) {
+        alert('Please enter a valid positive value for the unit size.');
+        return;
+    }
+
+    profit = 0;
+    initializeSequence(unitSize, targetProfit, split);
+    updateNextBet();
+    updateDisplays();
+});
 
 document.getElementById('won').addEventListener('click', function() {
     profit += currentBet;
@@ -37,9 +33,9 @@ document.getElementById('lost').addEventListener('click', function() {
     updateDisplays();
 });
 
-function initializeSequence(minBet, targetProfit, split) {
+function initializeSequence(unitSize, targetProfit, split) {
     sequence = [];
-    let part = Math.round(targetProfit / split);
+    let part = unitSize; // Each part is equal to the unit size
     for (let i = 0; i < split; i++) {
         sequence.push(part);
     }
