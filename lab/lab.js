@@ -46,15 +46,22 @@ document.getElementById('undo').addEventListener('click', function() {
 });
 
 function initializeSequence(unitSize) {
-    sequence = new Array(10).fill(unitSize);
-    updateNextBet();
+    sequence = new Array(10).fill(unitSize);  // Fill sequence with 10 parts of unit size
+    updateNextBet(); // Ensure next bet is calculated right after initialization
 }
 
 function updateNextBet() {
-    currentBet = (sequence.length > 1) ? sequence[0] + sequence[sequence.length - 1] : (sequence[0] || 0);
+    if (sequence.length > 1) {
+        currentBet = sequence[0] + sequence[sequence.length - 1];  // Sum of the first and last elements
+    } else if (sequence.length === 1) {
+        currentBet = sequence[0];  // If only one element, the bet is that element
+    } else {
+        currentBet = 0;  // No elements in sequence
+    }
 }
 
 function updateDisplays() {
+    document.getElementById('nextBet').innerText = currentBet;  // Display the next bet
     document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
     document.getElementById('profitDisplay').innerText = profit;
 }
