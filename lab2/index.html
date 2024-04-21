@@ -10,9 +10,11 @@
         .red-circle {
             background-color: #FF4136; /* Red color */
         }
+
         .black-circle {
             background-color: #111; /* Black color */
         }
+
         button:disabled {
             opacity: 0.5;
             background-color: #cccccc; /* Light gray */
@@ -24,9 +26,14 @@
 <div class="max-w-md mx-auto my-5 p-3 border rounded-lg shadow-lg bg-white">
     <div class="mb-3">
         <label for="unitSize" class="block text-gray-700 text-sm font-bold mb-1">Unit Size:</label>
-        <input type="number" id="unitSize" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="10">
+        <input type="number" id="unitSize"
+               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+               value="10">
     </div>
-    <button id="start" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline block w-full mb-3">Ok</button>
+    <button id="start"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline block w-full mb-3">
+        Ok
+    </button>
     <div id="bottomPanel" class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3" style="display: none">
         <div class="text-lg text-center">
             <div id="betCircle" class="mx-auto h-16 w-16 flex items-center justify-center rounded-full">
@@ -35,19 +42,154 @@
         </div>
         <h2 class="text-lg text-center"><span id="sequenceDisplay" class="text-sm"></span></h2>
         <div class="flex justify-between">
-            <button id="won" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1">
+            <button id="won"
+                    class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1">
                 <i class="fa fa-thumbs-up"></i>
             </button>
-            <button id="lost" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 ml-2 mr-2">
+            <button id="lost"
+                    class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 ml-2 mr-2">
                 <i class="fa fa-thumbs-down"></i>
             </button>
-            <button id="undo" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+            <button id="undo"
+                    class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    disabled>
                 <i class="fa fa-undo"></i>
             </button>
         </div>
         <h2 class="text-lg mt-3 text-center">R<span id="profitDisplay">0</span></h2>
     </div>
 </div>
-<script src="lab.js?v=1"></script>
+<script>
+    let sequence = [];
+    let currentBet = 0;
+    let profit = 0;
+    let lastState = null; // Store the last state for a single undo
+    let currentColor = 'Red'; // Initial betting color
+    let betCount = 0; // Counter to track number of bets on the current color
+    const maxBetsPerColor = 2; // Maximum bets on one color before switching
+
+    document.getElementById('start').addEventListener('click', function () {
+        let unitSize = parseInt(document.getElementById('unitSize').value, 10);
+        if (isNaN(unitSize) || unitSize <= 0) {
+            alert('Please enter a valid positive value for the unit size.');
+            return;
+        }
+
+        profit = 0; // Reset profit at the start of a new sequence
+        initializeSequence(unitSize);
+        updateNextBet();
+        updateDisplays();
+        disableUndo(); // Disable undo button on start
+    });
+
+    document.getElementById('won').addEventListener('click', function () {
+        saveLastState(); // Save state before update
+        updateSequenceForWin();
+        updateDisplays();
+        enableUndo(); // Enable undo after a change
+    });
+
+    document.getElementById('lost').addEventListener('click', function () {
+        saveLastState(); // Save state before update
+        updateSequenceForLoss();
+        updateDisplays();
+        enableUndo(); // Enable undo after a change
+    });
+
+    document.getElementById('undo').addEventListener('click', function () {
+        if (!lastState) {
+            alert("No actions to undo.");
+            return;
+        }
+        // Restore the last state
+        sequence = [...lastState.sequence];
+        profit = lastState.profit;
+        currentBet = lastState.currentBet;
+        currentColor = lastState.currentColor; // Restore the color state
+        betCount = lastState.betCount; // Restore the bet count
+        updateDisplays();
+        lastState = null; // Clear last state after undo
+        disableUndo(); // Disable undo button after use
+    });
+
+    function initializeSequence(unitSize) {
+        sequence = new Array(10).fill(unitSize);  // Fill sequence with 10 parts of unit size
+        currentColor = 'Red'; // Start with Red
+        betCount = 0; // Reset bet count
+        // updateNextBet(); // Ensure next bet is calculated right after initialization
+        // updateDisplays()
+    }
+
+    function updateNextBet() {
+        if (sequence.length >= 2) {
+            // Calculate bet as sum of the first and last item in the sequence if there are at least two elements
+            currentBet = sequence[0] + sequence[sequence.length - 1];
+        } else if (sequence.length === 1) {
+            // If there is only one element, bet that amount
+            currentBet = sequence[0];
+        } else {
+            // If there are no elements, set bet to 0
+            currentBet = 0;
+        }
+
+        if (betCount >= maxBetsPerColor) {
+            // Switch color after max bets
+            currentColor = (currentColor === 'Red' ? 'Black' : 'Red');
+            betCount = 0;
+        }
+        betCount++;
+    }
+
+    function updateDisplays() {
+        if (sequence.length === 0) {
+            document.getElementById('bottomPanel').style.display = 'none';
+        } else {
+            document.getElementById('bottomPanel').style.display = 'block';
+
+            // Update bet circle color and text
+            const betCircle = document.getElementById('betCircle');
+            betCircle.className = 'mx-auto h-16 w-16 flex items-center justify-center rounded-full ' + (currentColor === 'Red' ? 'red-circle' : 'black-circle');
+            document.getElementById('betAmount').innerText = currentBet;
+
+            document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
+            document.getElementById('profitDisplay').innerText = profit;
+        }
+    }
+
+    function updateSequenceForWin() {
+        profit += currentBet;
+        if (sequence.length > 1) {
+            sequence.pop(); // Remove the last element
+            sequence.shift(); // Remove the first element
+        } else if (sequence.length === 1) {
+            sequence.shift(); // Only remove the first element if there is one left
+        }
+        updateNextBet();
+    }
+
+    function updateSequenceForLoss() {
+        sequence.push(currentBet);
+        profit -= currentBet;
+        updateNextBet();
+    }
+
+    function saveLastState() {
+        lastState = {
+            sequence: [...sequence],
+            profit: profit,
+            currentBet: currentBet,
+            currentColor: currentColor, // Save current color
+            betCount: betCount // Save bet count
+        };
+    }
+
+    function enableUndo() {
+        document.getElementById('undo').disabled = false;
+    }
+
+    function disableUndo() {
+        document.getElementById('undo').disabled = true;
+    }
+</script>
 </body>
 </html>
