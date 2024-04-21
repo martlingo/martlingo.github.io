@@ -26,7 +26,13 @@
         <label for="sequenceLength" class="block text-gray-700 text-sm font-bold mb-1">Sequence Length:</label>
         <input type="number" id="sequenceLength"
                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-               value="10">
+               value="2">
+    </div>
+    <div class="mb-3">
+        <label for="lossThreshold" class="block text-gray-700 text-sm font-bold mb-1">Loss Split Threshold:</label>
+        <input type="number" id="lossThreshold"
+               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+               value="2">
     </div>
     <button id="start"
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline block w-full mb-3">
@@ -34,25 +40,21 @@
     </button>
     <div id="bottomPanel" class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3">
         <div class="text-lg text-center">
-            <div id="betCircle" class="mx-auto h-16 w-16 flex items-center justify-center rounded-full">
-                <span id="betAmount" class="font-bold text-white text-lg"></span>
+            <div id="betCircle" class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-black">
+                <span id="betAmount" class="font-bold text-white text-lg">0</span>
             </div>
         </div>
-        <h2 class="text-lg text-center"><span id="sequenceDisplay" class="text-sm"></span></h2>
+        <h2 class="text-lg text-center"><span id="sequenceDisplay" class="text-sm">&nbsp;</span></h2>
         <div class="flex justify-between">
             <button id="won"
                     class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1">
-                <i class="fa fa-thumbs-up"></i>
-            </button>
+                <i class="fa fa-thumbs-up"></i></button>
             <button id="lost"
                     class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 ml-2 mr-2">
-                <i class="fa fa-thumbs-down"></i>
-            </button>
+                <i class="fa fa-thumbs-down"></i></button>
             <button id="undo"
                     class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    disabled>
-                <i class="fa fa-undo"></i>
-            </button>
+                    disabled><i class="fa fa-undo"></i></button>
         </div>
         <h2 class="text-lg mt-3 text-center">R<span id="profitDisplay">0</span></h2>
     </div>
@@ -61,23 +63,25 @@
     let sequence = [];
     let currentBet = 0;
     let profit = 0;
-    let lastState = null; // Store the last state for a single undo
-    let consecutiveLosses = 0; // Initialize counter for consecutive losses
+    let lastState = null;
+    let consecutiveLosses = 0;
+    let lossThreshold = 2;
 
     document.getElementById('start').addEventListener('click', function () {
         let unitSize = parseInt(document.getElementById('unitSize').value, 10);
         let sequenceLength = parseInt(document.getElementById('sequenceLength').value, 10);
+        lossThreshold = parseInt(document.getElementById('lossThreshold').value, 10); // Get the loss threshold from input
 
-        if (isNaN(unitSize) || unitSize <= 0 || isNaN(sequenceLength) || sequenceLength <= 0) {
-            alert('Please enter valid positive values for the unit size and sequence length.');
+        if (isNaN(unitSize) || unitSize <= 0 || isNaN(sequenceLength) || sequenceLength <= 0 || isNaN(lossThreshold) || lossThreshold < 1) {
+            alert('Please enter valid positive values for the unit size, sequence length, and loss split threshold.');
             return;
         }
 
-        profit = 0; // Reset profit at the start of a new sequence
+        profit = 0; // Reset profit
         initializeSequence(unitSize, sequenceLength);
         updateNextBet();
         updateDisplays();
-        disableUndo(); // Disable undo button on start
+        disableUndo();
     });
 
     document.getElementById('won').addEventListener('click', function () {
@@ -151,14 +155,14 @@
     }
 
     function updateSequenceForLoss() {
-        profit -= currentBet * 2; // Total bet on two columns
-        consecutiveLosses++; // Increment consecutive losses
+        profit -= currentBet * 2;
+        consecutiveLosses++;
 
-        if (consecutiveLosses >= 3) {
-            let splitLoss = currentBet; // Split the loss into two parts
-            sequence.push(splitLoss, splitLoss); // Add both parts to the end of the sequence
+        if (consecutiveLosses >= lossThreshold) {
+            let splitLoss = currentBet;
+            sequence.push(splitLoss, splitLoss);
         } else {
-            sequence.push(currentBet * 2); // Add the total loss to the sequence normally
+            sequence.push(currentBet * 2);
         }
 
         updateNextBet();
@@ -180,6 +184,7 @@
     function disableUndo() {
         document.getElementById('undo').disabled = true;
     }
+
 </script>
 </body>
 </html>
