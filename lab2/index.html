@@ -7,10 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.17/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        .red-circle {
-            background-color: #FF4136; /* Red color */
-        }
-
         .black-circle {
             background-color: #111; /* Black color */
         }
@@ -40,7 +36,7 @@
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline block w-full mb-3">
         Ok
     </button>
-    <div id="bottomPanel" class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3" style="display: none">
+    <div id="bottomPanel" class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3">
         <div class="text-lg text-center">
             <div id="betCircle" class="mx-auto h-16 w-16 flex items-center justify-center rounded-full">
                 <span id="betAmount" class="font-bold text-white text-lg"></span>
@@ -134,15 +130,15 @@
 
     function updateDisplays() {
         if (sequence.length === 0) {
-            document.getElementById('bottomPanel').style.display = 'none';
+            document.getElementById('betAmount').innerText = '0';
+            document.getElementById('sequenceDisplay').innerText = 'Done';
         } else {
-            document.getElementById('bottomPanel').style.display = 'block';
             const betCircle = document.getElementById('betCircle');
             betCircle.className = 'mx-auto h-16 w-16 flex items-center justify-center rounded-full black-circle';
             document.getElementById('betAmount').innerText = currentBet;
             document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
-            document.getElementById('profitDisplay').innerText = profit;
         }
+        document.getElementById('profitDisplay').innerText = profit;
     }
 
     function updateSequenceForWin() {
