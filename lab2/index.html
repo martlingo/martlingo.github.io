@@ -66,9 +66,7 @@
     let lastState = null; // Store the last state for a single undo
     let currentColor = 'Red'; // Initial betting color
     let betCount = 0; // Counter to track number of bets on the current color
-    const maxBetsPerColor = 2; // Maximum bets on one color before switching
     let consecutiveLosses = 0; // Initialize counter for consecutive losses
-
 
     document.getElementById('start').addEventListener('click', function () {
         let unitSize = parseInt(document.getElementById('unitSize').value, 10);
@@ -107,8 +105,10 @@
         sequence = [...lastState.sequence];
         profit = lastState.profit;
         currentBet = lastState.currentBet;
-        currentColor = lastState.currentColor; // Restore the color state
-        betCount = lastState.betCount; // Restore the bet count
+        currentColor = lastState.currentColor;
+        betCount = lastState.betCount;
+        consecutiveLosses = lastState.consecutiveLosses; // Restore consecutive losses
+
         updateDisplays();
         lastState = null; // Clear last state after undo
         disableUndo(); // Disable undo button after use
@@ -118,8 +118,6 @@
         sequence = new Array(10).fill(unitSize);  // Fill sequence with 10 parts of unit size
         currentColor = 'Red'; // Start with Red
         betCount = 0; // Reset bet count
-        // updateNextBet(); // Ensure next bet is calculated right after initialization
-        // updateDisplays()
         consecutiveLosses = 0; // Reset consecutive losses counter
     }
 
@@ -183,8 +181,9 @@
             sequence: [...sequence],
             profit: profit,
             currentBet: currentBet,
-            currentColor: currentColor, // Save current color
-            betCount: betCount // Save bet count
+            currentColor: currentColor,
+            betCount: betCount,
+            consecutiveLosses: consecutiveLosses // Save the count of consecutive losses
         };
     }
 
