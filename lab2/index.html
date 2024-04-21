@@ -67,6 +67,8 @@
     let currentColor = 'Red'; // Initial betting color
     let betCount = 0; // Counter to track number of bets on the current color
     const maxBetsPerColor = 2; // Maximum bets on one color before switching
+    let consecutiveLosses = 0; // Initialize counter for consecutive losses
+
 
     document.getElementById('start').addEventListener('click', function () {
         let unitSize = parseInt(document.getElementById('unitSize').value, 10);
@@ -118,6 +120,7 @@
         betCount = 0; // Reset bet count
         // updateNextBet(); // Ensure next bet is calculated right after initialization
         // updateDisplays()
+        consecutiveLosses = 0; // Reset consecutive losses counter
     }
 
     function updateNextBet() {
@@ -148,6 +151,8 @@
 
     function updateSequenceForWin() {
         profit += currentBet; // Gain equals one column bet
+        consecutiveLosses = 0; // Reset consecutive losses counter on a win
+
         if (sequence.length > 1) {
             sequence.pop(); // Remove last element
             sequence.shift(); // Remove first element
@@ -159,7 +164,17 @@
 
     function updateSequenceForLoss() {
         profit -= currentBet * 2; // Total bet on two columns
-        sequence.push(currentBet * 2); // Add loss to the end
+        consecutiveLosses++; // Increment consecutive losses
+
+        if (consecutiveLosses >= 4) {
+            // Apply the secret weapon by splitting the loss amount into two and adding both parts to the sequence
+            let splitLoss = (currentBet * 2) / 2; // Split the loss into two parts
+            sequence.push(splitLoss, splitLoss); // Add both parts to the end of the sequence
+        } else {
+            // Add the total loss to the sequence normally
+            sequence.push(currentBet * 2);
+        }
+
         updateNextBet();
     }
 
