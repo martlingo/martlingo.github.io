@@ -122,22 +122,12 @@
 
     function updateNextBet() {
         if (sequence.length >= 2) {
-            // Calculate bet as sum of the first and last item in the sequence if there are at least two elements
-            currentBet = sequence[0] + sequence[sequence.length - 1];
+            currentBet = sequence[0] + sequence[sequence.length - 1]; // Total bet for one column
         } else if (sequence.length === 1) {
-            // If there is only one element, bet that amount
-            currentBet = sequence[0];
+            currentBet = sequence[0]; // Only one element, bet it
         } else {
-            // If there are no elements, set bet to 0
-            currentBet = 0;
+            currentBet = 0; // No elements, no bet
         }
-
-        if (betCount >= maxBetsPerColor) {
-            // Switch color after max bets
-            currentColor = (currentColor === 'Red' ? 'Black' : 'Red');
-            betCount = 0;
-        }
-        betCount++;
     }
 
     function updateDisplays() {
@@ -157,19 +147,19 @@
     }
 
     function updateSequenceForWin() {
-        profit += currentBet;
+        profit += currentBet; // Gain equals one column bet
         if (sequence.length > 1) {
-            sequence.pop(); // Remove the last element
-            sequence.shift(); // Remove the first element
+            sequence.pop(); // Remove last element
+            sequence.shift(); // Remove first element
         } else if (sequence.length === 1) {
-            sequence.shift(); // Only remove the first element if there is one left
+            sequence.shift(); // Only one element, remove it
         }
         updateNextBet();
     }
 
     function updateSequenceForLoss() {
-        sequence.push(currentBet);
-        profit -= currentBet;
+        profit -= currentBet * 2; // Total bet on two columns
+        sequence.push(currentBet * 2); // Add loss to the end
         updateNextBet();
     }
 
