@@ -64,8 +64,6 @@
     let currentBet = 0;
     let profit = 0;
     let lastState = null; // Store the last state for a single undo
-    let currentColor = 'Red'; // Initial betting color
-    let betCount = 0; // Counter to track number of bets on the current color
     let consecutiveLosses = 0; // Initialize counter for consecutive losses
 
     document.getElementById('start').addEventListener('click', function () {
@@ -105,10 +103,7 @@
         sequence = [...lastState.sequence];
         profit = lastState.profit;
         currentBet = lastState.currentBet;
-        currentColor = lastState.currentColor;
-        betCount = lastState.betCount;
         consecutiveLosses = lastState.consecutiveLosses; // Restore consecutive losses
-
         updateDisplays();
         lastState = null; // Clear last state after undo
         disableUndo(); // Disable undo button after use
@@ -116,8 +111,6 @@
 
     function initializeSequence(unitSize) {
         sequence = new Array(10).fill(unitSize);  // Fill sequence with 10 parts of unit size
-        currentColor = 'Red'; // Start with Red
-        betCount = 0; // Reset bet count
         consecutiveLosses = 0; // Reset consecutive losses counter
     }
 
@@ -136,12 +129,9 @@
             document.getElementById('bottomPanel').style.display = 'none';
         } else {
             document.getElementById('bottomPanel').style.display = 'block';
-
-            // Update bet circle color and text
             const betCircle = document.getElementById('betCircle');
-            betCircle.className = 'mx-auto h-16 w-16 flex items-center justify-center rounded-full ' + (currentColor === 'Red' ? 'red-circle' : 'black-circle');
+            betCircle.className = 'mx-auto h-16 w-16 flex items-center justify-center rounded-full black-circle';
             document.getElementById('betAmount').innerText = currentBet;
-
             document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
             document.getElementById('profitDisplay').innerText = profit;
         }
@@ -165,12 +155,10 @@
         consecutiveLosses++; // Increment consecutive losses
 
         if (consecutiveLosses >= 4) {
-            // Apply the secret weapon by splitting the loss amount into two and adding both parts to the sequence
-            let splitLoss = (currentBet * 2) / 2; // Split the loss into two parts
+            let splitLoss = currentBet; // Split the loss into two parts
             sequence.push(splitLoss, splitLoss); // Add both parts to the end of the sequence
         } else {
-            // Add the total loss to the sequence normally
-            sequence.push(currentBet * 2);
+            sequence.push(currentBet * 2); // Add the total loss to the sequence normally
         }
 
         updateNextBet();
@@ -181,8 +169,6 @@
             sequence: [...sequence],
             profit: profit,
             currentBet: currentBet,
-            currentColor: currentColor,
-            betCount: betCount,
             consecutiveLosses: consecutiveLosses // Save the count of consecutive losses
         };
     }
