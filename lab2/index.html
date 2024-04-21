@@ -154,7 +154,7 @@
         profit -= currentBet * 2; // Total bet on two columns
         consecutiveLosses++; // Increment consecutive losses
 
-        if (consecutiveLosses >= 4) {
+        if (consecutiveLosses >= 3) {
             let splitLoss = currentBet; // Split the loss into two parts
             sequence.push(splitLoss, splitLoss); // Add both parts to the end of the sequence
         } else {
