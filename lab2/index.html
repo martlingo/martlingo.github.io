@@ -159,6 +159,7 @@
         consecutiveLosses++;
 
         if (consecutiveLosses >= lossThreshold) {
+            consecutiveLosses = 0;
             let splitLoss = currentBet;
             sequence.push(splitLoss, splitLoss);
         } else {
