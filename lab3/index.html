@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.17/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        button:disabled {
+            opacity: 0.5;
+            background-color: #cccccc; /* Light gray */
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+<div class="max-w-md mx-auto my-5 p-3 border rounded-lg shadow-lg bg-white">
+    <div class="mb-3">
+        <label for="unitSize" class="block text-gray-700 text-sm font-bold mb-1">Unit Size:</label>
+        <input type="number" id="unitSize"
+               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+               value="1">
+    </div>
+    <div class="mb-3">
+        <label for="sequenceLength" class="block text-gray-700 text-sm font-bold mb-1">Sequence Length:</label>
+        <input type="number" id="sequenceLength"
+               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+               value="3">
+    </div>
+    <div class="mb-3">
+        <label for="lossThreshold" class="block text-gray-700 text-sm font-bold mb-1">Loss Split Threshold:</label>
+        <input type="number" id="lossThreshold"
+               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+               value="4">
+    </div>
+    <button id="start"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline block w-full mb-3">
+        Ok
+    </button>
+    <div id="bottomPanel" class="fixed inset-x-0 bottom-0 bg-white shadow-lg p-3">
+        <div class="text-lg text-center">
+            <div id="betCircle" class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-black">
+                <span id="betAmount" class="font-bold text-white text-lg">0</span>
+            </div>
+        </div>
+        <h2 class="text-lg text-center"><span id="sequenceDisplay" class="text-sm">&nbsp;</span></h2>
+        <div class="flex justify-between">
+            <button id="won"
+                    class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1">
+                <i class="fa fa-thumbs-up"></i></button>
+            <button id="lost"
+                    class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex-1 ml-2 mr-2">
+                <i class="fa fa-thumbs-down"></i></button>
+            <button id="undo"
+                    class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    disabled><i class="fa fa-undo"></i></button>
+        </div>
+        <h2 class="text-lg mt-3 text-center">R<span id="profitDisplay">0</span></h2>
+    </div>
+</div>
+<script>
+    let sequence = [];
+    let currentBet = 0;
+    let profit = 0;
+    let lastState = null;
+    let consecutiveLosses = 0;
+    let lossThreshold = 4;
+
+    document.getElementById('start').addEventListener('click', function () {
+        let unitSize = parseInt(document.getElementById('unitSize').value, 10);
+        let sequenceLength = parseInt(document.getElementById('sequenceLength').value, 10);
+        lossThreshold = parseInt(document.getElementById('lossThreshold').value, 10); // Get the loss threshold from input
+
+        if (isNaN(unitSize) || unitSize <= 0 || isNaN(sequenceLength) || sequenceLength <= 0 || isNaN(lossThreshold) || lossThreshold < 1) {
+            alert('Please enter valid positive values for the unit size, sequence length, and loss split threshold.');
+            return;
+        }
+
+        profit = 0; // Reset profit
+        initializeSequence(unitSize, sequenceLength);
+        updateNextBet();
+        updateDisplays();
+        disableUndo();
+    });
+
+    document.getElementById('won').addEventListener('click', function () {
+        saveLastState(); // Save state before update
+        updateSequenceForWin();
+        updateDisplays();
+        enableUndo(); // Enable undo after a change
+    });
+
+    document.getElementById('lost').addEventListener('click', function () {
+        saveLastState(); // Save state before update
+        updateSequenceForLoss();
+        updateDisplays();
+        enableUndo(); // Enable undo after a change
+    });
+
+    document.getElementById('undo').addEventListener('click', function () {
+        if (!lastState) {
+            alert("No actions to undo.");
+            return;
+        }
+        // Restore the last state
+        sequence = [...lastState.sequence];
+        profit = lastState.profit;
+        currentBet = lastState.currentBet;
+        consecutiveLosses = lastState.consecutiveLosses; // Restore consecutive losses
+        updateDisplays();
+        lastState = null; // Clear last state after undo
+        disableUndo(); // Disable undo button after use
+    });
+
+    function initializeSequence(unitSize, sequenceLength) {
+        sequence = new Array(sequenceLength).fill(unitSize);  // Fill sequence with parts of unit size
+        consecutiveLosses = 0; // Reset consecutive losses counter
+    }
+
+    function updateNextBet() {
+        if (sequence.length >= 2) {
+            currentBet = sequence[0] + sequence[sequence.length - 1]; // Total bet for one column
+        } else if (sequence.length === 1) {
+            currentBet = sequence[0]; // Only one element, bet it
+        } else {
+            currentBet = 0; // No elements, no bet
+        }
+    }
+
+    function updateDisplays() {
+        if (sequence.length === 0) {
+            document.getElementById('betAmount').innerText = '0';
+            document.getElementById('sequenceDisplay').innerText = 'Done';
+        } else {
+            const betCircle = document.getElementById('betCircle');
+            betCircle.className = 'mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-black';
+            document.getElementById('betAmount').innerText = currentBet;
+            document.getElementById('sequenceDisplay').innerText = sequence.join(', ');
+        }
+        document.getElementById('profitDisplay').innerText = profit;
+    }
+
+    function updateSequenceForWin() {
+        profit += currentBet; // Gain equals one column bet
+        consecutiveLosses = 0; // Reset consecutive losses counter on a win
+
+        if (sequence.length > 1) {
+            sequence.pop(); // Remove last element
+            sequence.shift(); // Remove first element
+        } else if (sequence.length === 1) {
+            sequence.shift(); // Only one element, remove it
+        }
+        updateNextBet();
+    }
+
+    function updateSequenceForLoss() {
+        profit -= currentBet * 3;
+        consecutiveLosses++;
+
+        if (consecutiveLosses >= lossThreshold) {
+            consecutiveLosses = 0;
+            let splitLoss = currentBet;
+            sequence.push(splitLoss, splitLoss);
+        } else {
+            sequence.push(currentBet * 3˚);
+        }
+
+        updateNextBet();
+    }
+
+    function saveLastState() {
+        lastState = {
+            sequence: [...sequence],
+            profit: profit,
+            currentBet: currentBet,
+            consecutiveLosses: consecutiveLosses // Save the count of consecutive losses
+        };
+    }
+
+    function enableUndo() {
+        document.getElementById('undo').disabled = false;
+    }
+
+    function disableUndo() {
+        document.getElementById('undo').disabled = true;
+    }
+
+</script>
+</body>
+</html>

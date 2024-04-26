@@ -1,0 +1,3 @@
+- Play the dice game and do the same thing but start with $2 units (2, 2, 2, 2, 2). 
+- You can set the win rate to exactly 65% giving you a smidge better win chance (.00135) AND they pay 1.5231 to 1. 
+- So for every cycle, you actually win $10.46 or $52.30
